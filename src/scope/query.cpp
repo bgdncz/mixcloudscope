@@ -1,5 +1,3 @@
-#include <boost/algorithm/string/trim.hpp>
-#include <algorithm>
 #include <scope/localization.h>
 #include <scope/query.h>
 
@@ -10,9 +8,10 @@
 #include <unity/scopes/SearchReply.h>
 #include <unity/scopes/SearchMetadata.h>
 #include <unity/scopes/VariantBuilder.h>
+#include <iostream>
+#include <QDebug>
 
 namespace sc = unity::scopes;
-namespace alg = boost::algorithm;
 
 using namespace std;
 using namespace api;
@@ -56,8 +55,7 @@ void Query::run(sc::SearchReplyProxy const& reply) {
         const sc::CannedQuery &query(sc::SearchQueryBase::query());
         sc::SearchMetadata myData = sc::SearchQueryBase::search_metadata();
         client_.cardinality = myData.cardinality();
-        string query_string = alg::trim_copy(query.query_string());
-        string emblemPath = Query::installdir + "/mixcloud.svg";
+        string query_string = query.query_string();
         if (query_string.empty()){
             Client::CloudCasts hotCasts;
             Client::CloudCasts newCasts;
@@ -67,24 +65,7 @@ void Query::run(sc::SearchReplyProxy const& reply) {
             auto new_category = reply->register_category("newCasts", "New", "", sc::CategoryRenderer(TRACKS_TEMPLATE));
             for (const auto &hotCast : hotCasts.cloudcast){
                 sc::CategorisedResult hotRes(hot_category);
-                hotRes.set_uri(hotCast.url);
-                hotRes.set_title(hotCast.name);
-                hotRes.set_art(hotCast.thumbnail);
-                hotRes["subtitle"] = hotCast.user.name;
-                hotRes["username"] = hotCast.user.username;
-                hotRes["type"] = "cloudcast";
-                hotRes["getExtra"] = getExtra;
-                hotRes["repost"] = hotCast.repost_count;
-                hotRes["slug"] = hotCast.slug;
-                hotRes["listen"] =  hotCast.listener_count;
-                hotRes["favorite"] = hotCast.favorite_count;
-                hotRes["audio_length"] = hotCast.audio_length;
-                string myValue = "♥ " + std::to_string(hotCast.favorite_count);
-                sc::VariantBuilder builder;
-                builder.add_tuple({{"value", sc::Variant(hotCast.audio_length)}});
-                builder.add_tuple({{"value", sc::Variant(myValue)}});
-                hotRes["attributes"] = builder.end();
-                hotRes["emblem"] = emblemPath;
+                parseCasts(hotRes, hotCast);
                 if (!reply->push(hotRes)){
                     return;
                 }
@@ -92,24 +73,7 @@ void Query::run(sc::SearchReplyProxy const& reply) {
             if (showNew){
                 for (const auto &newCast : newCasts.cloudcast){
                     sc::CategorisedResult newRes(new_category);
-                    newRes.set_uri(newCast.url);
-                    newRes.set_title(newCast.name);
-                    newRes.set_art(newCast.thumbnail);
-                    newRes["subtitle"] = newCast.user.name;
-                    newRes["type"] = "cloudcast";
-                    newRes["slug"] = newCast.slug;
-                    newRes["repost"] = newCast.repost_count;
-                    newRes["username"] = newCast.user.username;
-                    newRes["listen"] =  newCast.listener_count;
-                    newRes["favorite"] = newCast.favorite_count;
-                    newRes["audio_length"] = newCast.audio_length;
-                    newRes["getExtra"] = getExtra;
-                    string myValue = "♪♫" + std::to_string(newCast.listener_count);
-                    sc::VariantBuilder builder;
-                    builder.add_tuple({{"value", sc::Variant(newCast.audio_length)}});
-                    builder.add_tuple({{"value", sc::Variant(myValue)}});
-                    newRes["attributes"] = builder.end();
-                    newRes["emblem"] = emblemPath;
+                    parseCasts(newRes, newCast);
                     if (!reply->push(newRes)){
                         return;
                     }
@@ -124,24 +88,7 @@ void Query::run(sc::SearchReplyProxy const& reply) {
             auto user_category = reply->register_category("users", "Users", "", sc::CategoryRenderer(USERS_TEMPLATE));
             for (const auto &cast : castResults.cloudcast){
                 sc::CategorisedResult castRes(cast_category);
-                castRes.set_title(cast.name);
-                castRes.set_uri(cast.url);
-                castRes.set_art(cast.thumbnail);
-                castRes["subtitle"] = cast.user.name;
-                castRes["repost"] = cast.repost_count;
-                castRes["listen"] =  cast.listener_count;
-                castRes["favorite"] = cast.favorite_count;
-                castRes["type"] = "cloudcast";
-                castRes["username"] = cast.user.username;
-                castRes["slug"] = cast.slug;
-                castRes["getExtra"] = getExtra;
-                castRes["audio_length"] = cast.audio_length;
-                string myValue = "♥ " + std::to_string(cast.favorite_count);
-                sc::VariantBuilder builder;
-                builder.add_tuple({{"value", sc::Variant(cast.audio_length)}});
-                builder.add_tuple({{"value", sc::Variant(myValue)}});
-                castRes["attributes"] = builder.end();
-                castRes["emblem"] = emblemPath;
+                parseCasts(castRes, cast);
                 if (!reply->push(castRes)){
                     return;
                 }
@@ -166,4 +113,34 @@ void Query::run(sc::SearchReplyProxy const& reply) {
         reply->error(current_exception());
     }
 }
+
+void Query::parseCasts(sc::CategorisedResult &hotRes, const api::Client::CloudCast &hotCast){
+    string emblemPath = Query::installdir + "/mixcloud.svg";
+    hotRes.set_uri(hotCast.url);
+    hotRes.set_title(hotCast.name);
+    hotRes.set_art(hotCast.thumbnail);
+    hotRes["subtitle"] = hotCast.user.name;
+    hotRes["username"] = hotCast.user.username;
+    hotRes["type"] = "cloudcast";
+    hotRes["getExtra"] = getExtra;
+    hotRes["repost"] = hotCast.repost_count;
+    hotRes["slug"] = hotCast.slug;
+    hotRes["listen"] =  hotCast.listener_count;
+    hotRes["favorite"] = hotCast.favorite_count;
+    hotRes["audio_length"] = hotCast.audio_length;
+    hotRes["created"] = hotCast.created;
+    string myValue;
+    if (hotCast.favorite_count != 0) {
+        myValue = std::to_string(hotCast.favorite_count) + " ♥";
+    }
+    else {
+        myValue = std::to_string(hotCast.listener_count) + " ♪♫";
+    }
+    sc::VariantBuilder builder;
+    builder.add_tuple({{"value", sc::Variant("⌚ " + hotCast.audio_length)}});
+    builder.add_tuple({{"value", sc::Variant(myValue)}});
+    hotRes["attributes"] = builder.end();
+    hotRes["emblem"] = emblemPath;
+}
+
 

@@ -25,6 +25,7 @@ public:
     void cancelled() override;
 
     void run(const unity::scopes::SearchReplyProxy &reply) override;
+    void parseCasts(unity::scopes::CategorisedResult &hotRes, const api::Client::CloudCast &hotCast);
 
 private:
     std::string installdir;

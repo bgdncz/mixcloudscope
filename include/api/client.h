@@ -41,6 +41,7 @@ public:
         int repost_count;
         User user;
         std::string slug;
+        std::string created;
     };
 
     /**

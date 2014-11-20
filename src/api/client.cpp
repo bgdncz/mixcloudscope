@@ -7,6 +7,8 @@
 #include <unity/scopes/QueryMetadata.h>
 #include <QVariantMap>
 #include <math.h>
+#include <QDebug>
+#include <boost/algorithm/string/replace.hpp>
 
 
 namespace http = core::net::http;
@@ -52,7 +54,9 @@ void Client::get(const net::Uri::Path &path,
 
     // Build the URI from its components
     net::Uri uri = net::make_uri(config_->apiroot, path, parameters);
-    configuration.uri = client->uri_to_string(uri);
+    std::string temporaryUri = client->uri_to_string(uri);
+    configuration.uri = boost::replace_all_copy(temporaryUri, "%20", "+");
+    qDebug(configuration.uri.c_str());
     // Give out a user agent string
     configuration.header.add("User-Agent", config_->user_agent);
 
@@ -118,7 +122,8 @@ Client::CloudCasts Client::parseJson(QJsonDocument root){
                 listener_count,
                 repost_count,
                 myUser,
-                item["slug"].toString().toStdString()
+                item["slug"].toString().toStdString(),
+                item["created_time"].toString().toStdString()
         });
     }
     return result;
