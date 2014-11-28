@@ -10,7 +10,6 @@ using namespace scope;
 
 void Scope::start(string const&) {
     config_ = make_shared<Config>();
-    config_->installdir = ScopeBase::scope_directory();
 
     setlocale(LC_ALL, "");
     string translation_directory = ScopeBase::scope_directory()

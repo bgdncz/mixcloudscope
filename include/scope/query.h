@@ -28,7 +28,6 @@ public:
     void parseCasts(unity::scopes::CategorisedResult &hotRes, const api::Client::CloudCast &hotCast);
 
 private:
-    std::string installdir;
     api::Client client_;
     void initScope();
     bool showNew;

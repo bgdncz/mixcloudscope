@@ -12,7 +12,6 @@ struct Config {
     /*
      * The root of all API request URLs
      */
-    std::string installdir { "" };
     std::string apiroot { "http://api.mixcloud.com" };
 
     /*

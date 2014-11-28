@@ -15,7 +15,7 @@ install(
   FILES
     "art.png"
     "logo.svg"
-    "mixcloud.svg"
+    "screenshot.png"
   DESTINATION
     "${SCOPE_INSTALL_DIR}"
 )

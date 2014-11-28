@@ -7,7 +7,6 @@
 #include <unity/scopes/QueryMetadata.h>
 #include <QVariantMap>
 #include <math.h>
-#include <QDebug>
 #include <boost/algorithm/string/replace.hpp>
 
 
@@ -56,7 +55,6 @@ void Client::get(const net::Uri::Path &path,
     net::Uri uri = net::make_uri(config_->apiroot, path, parameters);
     std::string temporaryUri = client->uri_to_string(uri);
     configuration.uri = boost::replace_all_copy(temporaryUri, "%20", "+");
-    qDebug(configuration.uri.c_str());
     // Give out a user agent string
     configuration.header.add("User-Agent", config_->user_agent);
 

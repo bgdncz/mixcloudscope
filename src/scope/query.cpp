@@ -30,12 +30,11 @@ using namespace scope;
  *
  * The icons are larger.
  */
-const static string TRACKS_TEMPLATE = "{\"schema-version\":1,\"template\":{\"category-layout\":\"grid\",\"card-layout\":\"horizontal\",\"card-size\":\"medium\"},\"components\":{\"title\":\"title\",\"art\":{\"field\":\"art\"},\"subtitle\":\"subtitle\",\"attributes\":\"attributes\",\"emblem\":\"emblem\"}}";
+const static string TRACKS_TEMPLATE = "{\"schema-version\":1,\"template\":{\"category-layout\":\"grid\",\"card-layout\":\"horizontal\",\"card-size\":\"medium\"},\"components\":{\"title\":\"title\",\"art\":{\"field\":\"art\"},\"subtitle\":\"subtitle\",\"attributes\":\"attributes\"}}";
 const static string USERS_TEMPLATE = "{\"schema-version\":1,\"components\":{\"title\":\"title\",\"art\":{\"field\":\"art\"}, \"subtitle\": \"subtitle\", \"attributes\": \"attributes\", \"emblem\": \"emblem\"}}";
 Query::Query(const sc::CannedQuery &query, const sc::SearchMetadata &metadata,
              Config::Ptr config) :
     sc::SearchQueryBase(query, metadata), client_(config) {
-    Query::installdir = config->installdir;
 }
 
 void Query::cancelled() {
@@ -115,7 +114,6 @@ void Query::run(sc::SearchReplyProxy const& reply) {
 }
 
 void Query::parseCasts(sc::CategorisedResult &hotRes, const api::Client::CloudCast &hotCast){
-    string emblemPath = Query::installdir + "/mixcloud.svg";
     hotRes.set_uri(hotCast.url);
     hotRes.set_title(hotCast.name);
     hotRes.set_art(hotCast.thumbnail);
@@ -140,7 +138,6 @@ void Query::parseCasts(sc::CategorisedResult &hotRes, const api::Client::CloudCa
     builder.add_tuple({{"value", sc::Variant("⌚ " + hotCast.audio_length)}});
     builder.add_tuple({{"value", sc::Variant(myValue)}});
     hotRes["attributes"] = builder.end();
-    hotRes["emblem"] = emblemPath;
 }
 
 
