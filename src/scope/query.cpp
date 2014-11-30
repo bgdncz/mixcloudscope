@@ -9,7 +9,6 @@
 #include <unity/scopes/SearchMetadata.h>
 #include <unity/scopes/VariantBuilder.h>
 #include <iostream>
-#include <QDebug>
 
 namespace sc = unity::scopes;
 
