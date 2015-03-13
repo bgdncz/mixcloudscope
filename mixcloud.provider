@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<provider>
+<provider id="com.ubuntu.boghison.mixcloud_mixcloudaccount">
   <name>Mixcloud</name>
+  <description>Ubuntu OA for Mixcloud</description>
   <icon>./mixcloud.png</icon>
-  <domains>*mixcloud\.com</domains>
   <translations>account-plugins</translations>
-  <plugin>generic-oauth</plugin>
+  <domains>.*mixcloud\.com</domains>
 
   <template>
     <group name="auth">
@@ -13,12 +13,13 @@
       <group name="oauth2">
         <group name="web_server">
           <setting name="Host">mixcloud.com</setting>
-          <setting name="AuthPath">oauth/authorize/</setting>
-          <setting name="TokenPath">oauth/access_token/</setting>
+          <setting name="AuthPath">oauth/authorize</setting>
+          <setting name="TokenPath">oauth/access_token</setting>
+          <setting name="RedirectUri">https://wiki.ubuntu.com/</setting>
+          <setting name="ResponseType">code</setting>
           <setting name="ClientId">6T85udtya8h2mC2FhK</setting>
           <setting name="ClientSecret">P3B9eEwgyh6QD38zAZJTvVq4t49auDUF</setting>
-          <setting name="RedirectUri">https://mixcloud.com/</setting>
-          <setting name="ResponseType">code</setting>
+          <setting type="as" name="AllowedSchemes">['https']</setting>
         </group>
       </group>
     </group>
