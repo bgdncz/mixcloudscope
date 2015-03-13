@@ -55,7 +55,7 @@ void Query::run(sc::SearchReplyProxy const& reply) {
         sc::SearchMetadata myData = sc::SearchQueryBase::search_metadata();
         client_.cardinality = myData.cardinality();
         string query_string = query.query_string();
-        unity::scopes::OnlineAccountClient oa_client("com.ubuntu.developer.boghison.mixcloud_mixcloudscope", "sharing", "Mixcloud");
+        unity::scopes::OnlineAccountClient oa_client("com.ubuntu.developer.boghison.mixcloud_mixcloudscope", "mixcloud-scope", "com.ubuntu.developer.boghison.mixcloud_mixcloudaccount");
         bool service_authenticated = false;
             for (auto const& status : oa_client.get_service_statuses())
             {
