@@ -73,7 +73,12 @@ configure_file(manifest.json.in ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
 
 # Install the click manifest
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/manifest.json DESTINATION "/")
+install(FILES "mixcloud.service" DESTINATION "/")
+install(FILES "mixcloud.application" DESTINATION "/")
 install(FILES "mixcloudscope.apparmor" DESTINATION "/")
+install(FILES "mixcloud.provider" DESTINATION "/")
+install(FILES "mixcloud.png" DESTINATION "/")
+install(DIRECTORY "mixcloud" DESTINATION "/")
 
 # Make this file show up in QtCreator
 add_custom_target(hidden_files
@@ -81,6 +86,9 @@ add_custom_target(hidden_files
   SOURCES
     manifest.json.in
     "mixcloudscope.apparmor"
+    "mixcloud.service"
+    "mixcloud.application"
+    "mixcloud.provider"
 )
 
 # Add our main directories

@@ -8,6 +8,7 @@
 #include <unity/scopes/SearchReply.h>
 #include <unity/scopes/SearchMetadata.h>
 #include <unity/scopes/VariantBuilder.h>
+#include <unity/scopes/OnlineAccountClient.h>
 #include <iostream>
 
 namespace sc = unity::scopes;
@@ -54,6 +55,29 @@ void Query::run(sc::SearchReplyProxy const& reply) {
         sc::SearchMetadata myData = sc::SearchQueryBase::search_metadata();
         client_.cardinality = myData.cardinality();
         string query_string = query.query_string();
+        unity::scopes::OnlineAccountClient oa_client("com.ubuntu.developer.boghison.mixcloud_mixcloudscope", "sharing", "Mixcloud");
+        bool service_authenticated = false;
+            for (auto const& status : oa_client.get_service_statuses())
+            {
+                if (status.service_authenticated)
+                {
+                    service_authenticated = true;
+                    break;
+                }
+            }
+            // If our service is not authenticated, return a "Log-in" result
+            if (!service_authenticated)
+            {
+                auto cat = reply->register_category("youtube_login", "", "");
+                unity::scopes::CategorisedResult res(cat);
+                res.set_title("Log-in to YouTube");
+                oa_client.register_account_login_item(res,
+                                                      query,
+                                                      unity::scopes::OnlineAccountClient::InvalidateResults,
+                                                      unity::scopes::OnlineAccountClient::DoNothing);
+                reply->push(res);
+            }
+
         if (query_string.empty()){
             Client::CloudCasts hotCasts;
             Client::CloudCasts newCasts;

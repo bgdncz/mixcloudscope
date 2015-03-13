@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application id="com.ubuntu.developer.boghison.mixcloud">
+  <description>MixCloud</description>
+  <desktop-entry>com.ubuntu.developer.boghison.mixcloud_mixcloudscope.desktop</desktop-entry>
+  <services>
+    <service id="com.ubuntu.developer.boghison.mixcloud_mixcloudscope">
+      <description>Listen to MixClouds</description>
+    </service>
+  </services>
+</application>
