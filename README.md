@@ -7,7 +7,7 @@ Mixcloud Scope
 Inspiration
 =============
 
-I was inspired by [Daniel Holbach](http://www.mixcloud.com/dholbach/ "Mixlcloud")'s mixes to create this scope and (as it turned out) there is a showdown for Ubuntu scopes. I began work with almost 0.5 knowledge on C++ and 1 of Qt (never mind the scale and I know it's weird, but Qt makes everything better, including C++). David Callé's tutorials are wonderfully written (of course), but I preffer videos and it turned out I was on a lucky streak, 'cause a few videos have been uploaded regarding scope development.
+I was inspired by [Daniel Holbach](http://www.mixcloud.com/dholbach/ "Mixcloud")'s mixes to create this scope and (as it turned out) a showdown took place for Ubuntu scopes. I began work with almost 0.5 knowledge on C++ and 1 of Qt (never mind the scale and I know it's weird, but Qt makes everything better, including C++). David Callé's tutorials are wonderfully written (of course), but I preffer videos and it turned out I was on a lucky streak, 'cause a few videos have been uploaded regarding scope development.
 
 The API
 =============

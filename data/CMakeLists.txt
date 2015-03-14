@@ -1,22 +1,9 @@
-configure_file(
-  "com.ubuntu.developer.boghison.mixcloud_mixcloudscope-settings.ini"
-  "${CMAKE_BINARY_DIR}/src/com.ubuntu.developer.boghison.mixcloud_mixcloudscope-settings.ini"
-)
-# Install the scope ini file
-install(
+INSTALL(DIRECTORY images DESTINATION ${CMAKE_INSTALL_PREFIX}/data)
+INSTALL(DIRECTORY oa DESTINATION ${CMAKE_INSTALL_PREFIX}/data)
+INSTALL(
   FILES
-    "com.ubuntu.developer.boghison.mixcloud_mixcloudscope.ini"
-    "com.ubuntu.developer.boghison.mixcloud_mixcloudscope-settings.ini"
-  DESTINATION ${SCOPE_INSTALL_DIR}
-)
-
-# Install the scope images
-install(
-  FILES
-    "art.png"
-    "logo.svg"
-    "screenshot.png"
+    screenshots/screenshot.png
+    settings/com.ubuntu.developer.boghison.mixcloud_scope-settings.ini
   DESTINATION
-    "${SCOPE_INSTALL_DIR}"
+    ${CMAKE_INSTALL_PREFIX}
 )
-

@@ -1,76 +1,53 @@
-
-# Put the ini file in the build directory next to the scope
-# .so file so test tools can find both easily.
-configure_file(
-  "${CMAKE_SOURCE_DIR}/data/com.ubuntu.developer.boghison.mixcloud_mixcloudscope.ini"
-  "${CMAKE_CURRENT_BINARY_DIR}/com.ubuntu.developer.boghison.mixcloud_mixcloudscope.ini"
-  @ONLY
+SET(SCOPE_SOURCES
+  scopehelper.cpp
+  preview.cpp
+  query.cpp
+  scope.cpp
 )
 
-configure_file(
-  "${CMAKE_SOURCE_DIR}/data/logo.svg"
-  "${CMAKE_CURRENT_BINARY_DIR}/logo.svg"
-  @ONLY
-  COPYONLY
+SET(SCOPE_HEADERS
+  scopehelper.h
+  preview.h
+  query.h
+  scope.h
 )
 
-# The sources to build the scope
-set(SCOPE_SOURCES
-  api/client.cpp
-  scope/preview.cpp
-  scope/query.cpp
-  scope/scope.cpp
-)
-
-# Find all the headers
-file(GLOB_RECURSE
-  SCOPE_HEADERS
-  "${CMAKE_SOURCE_DIR}/include/*.h" 
-)
-
-# Build an object library for the scope code
-add_library(
+ADD_LIBRARY(
   scope-static OBJECT
   ${SCOPE_SOURCES}
   ${SCOPE_HEADERS}
 )
 
 # Ensure we export all the symbols
-set_target_properties(
+SET_TARGET_PROPERTIES(
   scope-static
   PROPERTIES
     LINK_FLAGS "-Wl,--export-all-symbols"
 )
 
-# Build a shared library containing our scope code.
-# This will be the actual plugin that is loaded.
-add_library(
+ADD_LIBRARY(
   scope SHARED
   $<TARGET_OBJECTS:scope-static>
 )
 
-# Link against the object library and our external library dependencies
-target_link_libraries(
+TARGET_LINK_LIBRARIES(
   scope
   ${SCOPE_LDFLAGS}
-  ${Boost_LIBRARIES}
 )
 
-qt5_use_modules(
+QT5_USE_MODULES(
   scope
   Core
 )
 
-# Set the correct library output name to conform to the securiry policy 
-set_target_properties(
+SET_TARGET_PROPERTIES(
   scope
   PROPERTIES
-    OUTPUT_NAME "com.ubuntu.developer.boghison.mixcloud_mixcloudscope"
+    OUTPUT_NAME "com.ubuntu.developer.boghison.mixcloud_scope"
 )
 
-# Install the scope shared library
 install(
   TARGETS scope
-  LIBRARY DESTINATION ${SCOPE_INSTALL_DIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}
 )
 

@@ -1,0 +1,6 @@
+*.user
+*~
+*.o
+Makefile
+build.ninja
+moc*

@@ -1,0 +1,19 @@
+{
+    "architecture": "all",
+    "description": "A scope for mixcloud",
+    "framework": "ubuntu-sdk-14.10",
+    "hooks": {
+        "scope": {
+            "apparmor": "mixcloud.apparmor",
+            "scope": "scope"
+        },
+        "account": {
+            "account-qml-plugin": "data/oa/mixcloud",
+            "account-provider": "data/oa/mixcloud.provider"
+        }
+    },
+    "maintainer": "Bogdan Cuza <bogdan.cuza@hotmail.com>",
+    "name": "com.ubuntu.developer.boghison.mixcloud",
+    "title": "mixcloud",
+    "version": "0.4"
+}
