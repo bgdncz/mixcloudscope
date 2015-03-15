@@ -2,9 +2,7 @@
 #define SCOPE_PREVIEW_H_
 
 #include <unity/scopes/PreviewQueryBase.h>
-#include <api/client.h>
-#include <api/config.h>
-
+#include "scopehelper.h"
 
 namespace unity {
 namespace scopes {
@@ -34,7 +32,6 @@ public:
      * Populates the reply object with preview information.
      */
     void run(unity::scopes::PreviewReplyProxy const& reply) override;
-    api::Config::Ptr config_;
 };
 
 }

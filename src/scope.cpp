@@ -1,26 +1,16 @@
-#include <scope/localization.h>
-#include <scope/preview.h>
-#include <scope/query.h>
-#include <scope/scope.h>
+#include "preview.h"
+#include "query.h"
+#include "scope.h"
 
 namespace sc = unity::scopes;
 using namespace std;
-using namespace api;
 using namespace scope;
 
 void Scope::start(string const&) {
-    config_ = make_shared<Config>();
 
     setlocale(LC_ALL, "");
-    string translation_directory = ScopeBase::scope_directory()
-            + "/../share/locale/";
-    bindtextdomain(GETTEXT_PACKAGE, translation_directory.c_str());
-
-    // Under test we set a different API root
-    char *apiroot = getenv("NETWORK_SCOPE_APIROOT");
-    if (apiroot) {
-        config_->apiroot = apiroot;
-    }
+    string translation_directory = ScopeBase::scope_directory() + "/../share/locale/";
+    bindtextdomain("com.ubuntu.developer.boghison.mixcloud", translation_directory.c_str());
 }
 
 void Scope::stop() {
@@ -29,14 +19,13 @@ void Scope::stop() {
 sc::SearchQueryBase::UPtr Scope::search(const sc::CannedQuery &query,
                                         const sc::SearchMetadata &metadata) {
     // Boilerplate construction of Query
-    return sc::SearchQueryBase::UPtr(new Query(query, metadata, config_));
+    return sc::SearchQueryBase::UPtr(new Query(query, metadata));
 }
 
 sc::PreviewQueryBase::UPtr Scope::preview(sc::Result const& result,
                                           sc::ActionMetadata const& metadata) {
     // Boilerplate construction of Preview
     auto myPreview = new Preview(result, metadata);
-    myPreview->config_ = config_;
     return sc::PreviewQueryBase::UPtr(myPreview);
 }
 

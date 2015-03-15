@@ -1,8 +1,9 @@
 #ifndef SCOPE_QUERY_H_
 #define SCOPE_QUERY_H_
+#define TRACKS_TEMPLATE "{\"schema-version\":1,\"template\":{\"category-layout\":\"grid\",\"card-layout\":\"horizontal\",\"card-size\":\"medium\"},\"components\":{\"title\":\"title\",\"art\":{\"field\":\"art\"},\"subtitle\":\"subtitle\",\"attributes\":\"attributes\"}}"
+#define USERS_TEMPLATE "{\"schema-version\":1,\"components\":{\"title\":\"title\",\"art\":{\"field\":\"art\"}, \"subtitle\": \"subtitle\", \"attributes\": \"attributes\", \"emblem\": \"emblem\"}}"
 
-#include <api/client.h>
-
+#include "scopehelper.h"
 #include <unity/scopes/SearchQueryBase.h>
 #include <unity/scopes/ReplyProxyFwd.h>
 
@@ -18,17 +19,17 @@ namespace scope {
 class Query: public unity::scopes::SearchQueryBase {
 public:
     Query(const unity::scopes::CannedQuery &query,
-          const unity::scopes::SearchMetadata &metadata, api::Config::Ptr config);
+          const unity::scopes::SearchMetadata &metadata);
 
     ~Query() = default;
 
     void cancelled() override;
 
     void run(const unity::scopes::SearchReplyProxy &reply) override;
-    void parseCasts(unity::scopes::CategorisedResult &hotRes, const api::Client::CloudCast &hotCast);
+    void parseCasts(unity::scopes::CategorisedResult &hotRes, const ScopeHelper::CloudCast &hotCast);
 
 private:
-    api::Client client_;
+    ScopeHelper scopeHelper;
     void initScope();
     bool showNew;
     bool getExtra;

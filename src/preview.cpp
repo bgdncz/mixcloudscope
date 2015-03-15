@@ -1,5 +1,4 @@
-#include <scope/preview.h>
-
+#include "preview.h"
 #include <unity/scopes/ColumnLayout.h>
 #include <unity/scopes/PreviewWidget.h>
 #include <unity/scopes/PreviewReply.h>
@@ -20,7 +19,7 @@ void Preview::cancelled() {
 }
 
 void Preview::run(sc::PreviewReplyProxy const& reply) {
-    api::Client client_(Preview::config_);
+    ScopeHelper helper;
     sc::Result result = PreviewQueryBase::result();
 
     if(result["type"].get_string() == "cloudcast"){
@@ -64,7 +63,7 @@ void Preview::run(sc::PreviewReplyProxy const& reply) {
         if (result["getExtra"].get_bool()){
             sc::PreviewWidget description("description", "text");
             description.add_attribute_value("title", sc::Variant("Description"));
-            std::vector<std::string> full = client_.getExtra(1, result["username"].get_string() + "/" + result["slug"].get_string());
+            std::vector<std::string> full = helper.getExtra(1, result["username"].get_string() + "/" + result["slug"].get_string());
             if (full[0] != ""){
                 description.add_attribute_value("text", sc::Variant(full[0]));
                 reply->push({image, header, description, button, expandable, audio_length, favoritecount, listencount, repostcount, created});
@@ -102,7 +101,7 @@ void Preview::run(sc::PreviewReplyProxy const& reply) {
         image.add_attribute_mapping("source", "art");
         button.add_attribute_value("actions", builder.end());
         if (result["getExtra"].get_bool()) {
-            std::vector<std::string> full = client_.getExtra(2, result["subtitle"].get_string());
+            std::vector<std::string> full = helper.getExtra(2, result["subtitle"].get_string());
             sc::PreviewWidget bio("bio", "text"), expandable("expandable", "expandable"), location("location", "text"), created_time("created_time", "text"), cloudcast_count("cloudcast_count", "text"), favorite_count("favorite_count", "text"), follower_count("follower_count", "text"), following_count("following_count", "text");
             bio.add_attribute_value("title", sc::Variant("Bio"));
             bio.add_attribute_value("text", sc::Variant(full[7]));

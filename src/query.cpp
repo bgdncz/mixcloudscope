@@ -1,6 +1,4 @@
-#include <scope/localization.h>
-#include <scope/query.h>
-
+#include "query.h"
 #include <unity/scopes/Annotation.h>
 #include <unity/scopes/CategorisedResult.h>
 #include <unity/scopes/CategoryRenderer.h>
@@ -13,31 +11,14 @@
 namespace sc = unity::scopes;
 
 using namespace std;
-using namespace api;
 using namespace scope;
 
-
-/**
- * Define the layout for the forecast results
- *
- * The icon size is small, and ask for the card layout
- * itself to be horizontal. I.e. the text will be placed
- * next to the image.
- */
-/**
- * Define the larger "current weather" layout.
- *
- * The icons are larger.
- */
-const static string TRACKS_TEMPLATE = "{\"schema-version\":1,\"template\":{\"category-layout\":\"grid\",\"card-layout\":\"horizontal\",\"card-size\":\"medium\"},\"components\":{\"title\":\"title\",\"art\":{\"field\":\"art\"},\"subtitle\":\"subtitle\",\"attributes\":\"attributes\"}}";
-const static string USERS_TEMPLATE = "{\"schema-version\":1,\"components\":{\"title\":\"title\",\"art\":{\"field\":\"art\"}, \"subtitle\": \"subtitle\", \"attributes\": \"attributes\", \"emblem\": \"emblem\"}}";
-Query::Query(const sc::CannedQuery &query, const sc::SearchMetadata &metadata,
-             Config::Ptr config) :
-    sc::SearchQueryBase(query, metadata), client_(config) {
+Query::Query(const sc::CannedQuery &query, const sc::SearchMetadata &metadata) :
+    sc::SearchQueryBase(query, metadata) {
 }
 
 void Query::cancelled() {
-    client_.cancel();
+    scopeHelper.cancel();
 }
 
 void Query::initScope() {
@@ -52,16 +33,16 @@ void Query::run(sc::SearchReplyProxy const& reply) {
         initScope();
         const sc::CannedQuery &query(sc::SearchQueryBase::query());
         sc::SearchMetadata myData = sc::SearchQueryBase::search_metadata();
-        client_.cardinality = myData.cardinality();
+        scopeHelper.cardinality = myData.cardinality();
         string query_string = query.query_string();
         if (query_string.empty()){
-            Client::CloudCasts hotCasts;
-            Client::CloudCasts newCasts;
-            hotCasts = client_.getHot();
-            newCasts = client_.getNew();
-            auto hot_category = reply->register_category("hotCasts", "Popular", "", sc::CategoryRenderer(TRACKS_TEMPLATE));
-            auto new_category = reply->register_category("newCasts", "New", "", sc::CategoryRenderer(TRACKS_TEMPLATE));
-            for (const auto &hotCast : hotCasts.cloudcast){
+            ScopeHelper::CloudCasts hotCasts;
+            ScopeHelper::CloudCasts newCasts;
+            hotCasts = scopeHelper.getHot();
+            newCasts = scopeHelper.getNew();
+            auto hot_category = reply->register_category("hotCasts", ScopeHelper::_("Popular"), "", sc::CategoryRenderer(TRACKS_TEMPLATE));
+            auto new_category = reply->register_category("newCasts", ScopeHelper::_("New"), "", sc::CategoryRenderer(TRACKS_TEMPLATE));
+            for (const auto &hotCast : hotCasts){
                 sc::CategorisedResult hotRes(hot_category);
                 parseCasts(hotRes, hotCast);
                 if (!reply->push(hotRes)){
@@ -69,7 +50,7 @@ void Query::run(sc::SearchReplyProxy const& reply) {
                 }
             }
             if (showNew){
-                for (const auto &newCast : newCasts.cloudcast){
+                for (const auto &newCast : newCasts){
                     sc::CategorisedResult newRes(new_category);
                     parseCasts(newRes, newCast);
                     if (!reply->push(newRes)){
@@ -78,20 +59,20 @@ void Query::run(sc::SearchReplyProxy const& reply) {
                 }
             }
         } else {
-            Client::CloudCasts castResults;
-            Client::Users userResults;
-            castResults = client_.getByQuery(query_string);
-            userResults = client_.getUsers(query_string);
-            auto cast_category = reply->register_category("casts", "Cloudcasts", "", sc::CategoryRenderer(TRACKS_TEMPLATE));
-            auto user_category = reply->register_category("users", "Users", "", sc::CategoryRenderer(USERS_TEMPLATE));
-            for (const auto &cast : castResults.cloudcast){
+            ScopeHelper::CloudCasts castResults;
+            ScopeHelper::Users userResults;
+            castResults = scopeHelper.getCloudCastsByQuery(query_string);
+            userResults = scopeHelper.getUsersByQuery(query_string);
+            auto cast_category = reply->register_category("casts", ScopeHelper::_("Cloudcasts"), "", sc::CategoryRenderer(TRACKS_TEMPLATE));
+            auto user_category = reply->register_category("users", ScopeHelper::_("Users"), "", sc::CategoryRenderer(USERS_TEMPLATE));
+            for (const auto &cast : castResults){
                 sc::CategorisedResult castRes(cast_category);
                 parseCasts(castRes, cast);
                 if (!reply->push(castRes)){
                     return;
                 }
             }
-            for (const auto &user : userResults.user){
+            for (const auto &user : userResults){
                 sc::CategorisedResult userRes(user_category);
                 userRes.set_title(user.name);
                 userRes.set_uri(user.url);
@@ -112,7 +93,7 @@ void Query::run(sc::SearchReplyProxy const& reply) {
     }
 }
 
-void Query::parseCasts(sc::CategorisedResult &hotRes, const api::Client::CloudCast &hotCast){
+void Query::parseCasts(sc::CategorisedResult &hotRes, const ScopeHelper::CloudCast &hotCast){
     hotRes.set_uri(hotCast.url);
     hotRes.set_title(hotCast.name);
     hotRes.set_art(hotCast.thumbnail);
